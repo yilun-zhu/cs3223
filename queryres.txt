@@ -1,0 +1,5 @@
+CUSTOMER.cid  CUSTOMER.sex  CUSTOMER.firstname  CUSTOMER.lastname  CUSTOMER.Address  
+41	0	kukxmafwmf	lpqpkfneeq	kzkpcqystscmxyzmwyxphtfghk	
+70	0	icbukznmrn	tkuseplalk	sqbwtfjixmmajenmvrxrahstib	
+53	0	svyywujwgc	geulkygiiv	rxlwbftkxairgmxurxanajtldi	
+76	0	spgiqvarxq	glucugsyrs	jmlvifuywwunklvgvhhywoyter	
