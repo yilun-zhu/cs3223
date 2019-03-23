@@ -1,9 +1,9 @@
 CUSTOMER.cid  CUSTOMER.firstname  CUSTOMER.sex  CART.cartid  CART.status  
 70	icbukznmrn	0	130	jqnrbyag	
-82	wtbehkshwa	1	150	graofatk	
 76	spgiqvarxq	0	184	ahvulivp	
 96	nguzumbtdk	1	48	ofmbdlov	
-174	wcpbrxkyto	1	133	rtqfaexf	
-41	kukxmafwmf	0	70	wtksgusn	
-53	svyywujwgc	0	131	yyzcmjsz	
 76	spgiqvarxq	0	118	kwmjgokp	
+41	kukxmafwmf	0	70	wtksgusn	
+82	wtbehkshwa	1	150	graofatk	
+53	svyywujwgc	0	131	yyzcmjsz	
+174	wcpbrxkyto	1	133	rtqfaexf	
