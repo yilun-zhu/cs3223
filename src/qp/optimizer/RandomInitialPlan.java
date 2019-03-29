@@ -73,7 +73,7 @@ public class RandomInitialPlan{
     public void createScanOp(){
 	int numtab = fromlist.size();
         Scan tempop = null;
- 
+
 	for(int i=0;i<numtab;i++){  // For each table in from list
 
 
@@ -103,7 +103,7 @@ public class RandomInitialPlan{
        // To handle the case where there is no where clause
        // selectionlist is empty, hence we set the root to be
        // the scan operator. the projectOp would be put on top of
-       // this later in CreateProjectOp 
+       // this later in CreateProjectOp
        if ( selectionlist.size() == 0 ) {
           root = tempop;
           return;
@@ -119,7 +119,7 @@ public class RandomInitialPlan{
 
     public void createSelectOp(){
 	Select op1 = null;
-     
+
 	for(int j=0;j<selectionlist.size();j++){
 
 	    Condition cn = (Condition) selectionlist.elementAt(j);

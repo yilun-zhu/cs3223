@@ -1,0 +1,11 @@
+CUSTOMER.cid  CUSTOMER.sex  CUSTOMER.firstname  CUSTOMER.lastname  CUSTOMER.Address  
+41	0	kukxmafwmf	lpqpkfneeq	kzkpcqystscmxyzmwyxphtfghk	
+70	0	icbukznmrn	tkuseplalk	sqbwtfjixmmajenmvrxrahstib	
+53	0	svyywujwgc	geulkygiiv	rxlwbftkxairgmxurxanajtldi	
+82	1	wtbehkshwa	wfgfhslkcq	xdbzkeuqobyuuhakngrpnrqsyp	
+96	1	nguzumbtdk	amheraghfk	nlyqazhsvcrzhxvtbgbywqhfni	
+51	1	zjqlsrmbxt	pqxfuiqgts	jhftcpjhebrukfneoumtlaeour	
+174	1	wcpbrxkyto	uxaowzewgo	jkhkzdsiuarngbjjqosvwuqaen	
+76	0	spgiqvarxq	glucugsyrs	jmlvifuywwunklvgvhhywoyter	
+178	1	rbxmtptrzz	wlqxyikjfj	eifkkpbkekusefbyidopveuyvg	
+186	1	nomqpsrrou	mrzmpnyafm	wshfvukzjpvrinsadygszjsdzu	
