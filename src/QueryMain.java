@@ -121,7 +121,7 @@ public class QueryMain{
 **/
 
 	RandomOptimizer ro = new RandomOptimizer(sqlquery);
-	Operator logicalroot = ro.getOptimizedPlan();
+	Operator logicalroot = ro.getTwoPhaseOptimizedPlan();
 	if(logicalroot==null){
 	    System.out.println("root is null");
 	    System.exit(1);
