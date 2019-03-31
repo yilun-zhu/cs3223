@@ -14,7 +14,6 @@ import java.io.ObjectOutputStream;
 
 public class HashJoin extends Join{
 
-
 	int batchsize;  //Number of tuples per out batch
 	int rightbatchsize; //number of tuples per batch right
 	int leftbatchsize; //number of tuples per batch left
@@ -387,48 +386,3 @@ public class HashJoin extends Join{
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

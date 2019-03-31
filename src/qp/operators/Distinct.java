@@ -125,7 +125,7 @@ public class Distinct extends Operator{
             comparisonBatch = base.next();
             comparisonCount++;
         }
-        System.out.println("RETURN");
+        System.out.println("RETURN!!");
         return outbatch;
     }
 
