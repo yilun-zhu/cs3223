@@ -1,0 +1,7 @@
+CUSTOMER.cid  CUSTOMER.sex  CUSTOMER.firstname  
+82	1	wtbehkshwa	
+96	1	nguzumbtdk	
+51	1	zjqlsrmbxt	
+174	1	wcpbrxkyto	
+178	1	rbxmtptrzz	
+186	1	nomqpsrrou	

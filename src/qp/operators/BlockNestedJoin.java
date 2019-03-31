@@ -66,17 +66,17 @@ public class BlockNestedJoin extends Join {
         } else {
             filenum++;
             rightTableFileName = "NJtemp-" + String.valueOf(filenum);
-            try{
+            try {
                 ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(rightTableFileName));
-                while((rightPage = right.next()) != null){
+                while ((rightPage = right.next()) != null) {
                     out.writeObject(rightPage);
                 }
                 out.close();
-            } catch(IOException io){
+            } catch (IOException io) {
                 System.out.println("BlockNestedJoin:writing the temporary file error");
                 return false;
             }
-            if(!right.close()) {
+            if (!right.close()) {
                 return false;
             }
         }
@@ -117,10 +117,10 @@ public class BlockNestedJoin extends Join {
                     return outputBuffer;
                 }
                 endOfRightTableStream = false;
-                try{
+                try {
                     rightTableFilePointer = new ObjectInputStream(new FileInputStream(rightTableFileName));
                     endOfRightTableStream = false;
-                }catch(IOException io){
+                } catch (IOException io) {
                     System.err.println("BlockNestedJoin:error in reading the file");
                     System.exit(1);
                 }
@@ -138,7 +138,7 @@ public class BlockNestedJoin extends Join {
             System.out.println(leftBufferCursor);
             System.out.println("LeftBufferCursor: " + leftBufferCursor);
             while (!endOfRightTableStream) {
-                System.out.println("Checkpoint 1 leftBufferCursor: "+ leftBufferCursor);
+                System.out.println("Checkpoint 1 leftBufferCursor: " + leftBufferCursor);
                 try {
                     if (rightCursor == 0 && leftCursor == 0 && leftBufferCursor == 0) {
                         rightBuffer = (Batch) rightTableFilePointer.readObject();

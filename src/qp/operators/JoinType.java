@@ -1,6 +1,6 @@
 /** Enumeration of join algorithm types
 	Change this class depending on actual algorithms
-	you have implemented in your query processor 
+	you have implemented in your query processor
 
 **/
 
