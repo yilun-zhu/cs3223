@@ -448,8 +448,8 @@ public class RandomOptimizer{
 	if(node.getOpType()==OpType.JOIN){
 	    Operator left = makeExecPlan(((Join)node).getLeft());
 	    Operator right = makeExecPlan(((Join)node).getRight());
-	    //int joinType = ((Join)node).getJoinType();
-		int joinType = JoinType.BLOCKNESTED;
+	    int joinType = ((Join)node).getJoinType();
+		//int joinType = JoinType.BLOCKNESTED;
 		//int joinType = JoinType.NESTEDJOIN;
 	    int numbuff = BufferManager.getBuffersPerJoin();
 	    switch(joinType){
@@ -480,8 +480,10 @@ public class RandomOptimizer{
 
 	    case JoinType.HASHJOIN:
 
-		NestedJoin hj = new NestedJoin((Join) node);
-                /* + other code */
+		HashJoin hj = new HashJoin((Join) node);
+		hj.setLeft(left);
+		hj.setRight(right);
+		hj.setNumBuff(numbuff);
 		return hj;
 	    default:
 		return node;
