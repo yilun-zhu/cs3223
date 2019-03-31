@@ -20,6 +20,7 @@ public class RandomInitialPlan{
     Vector selectionlist;     //List of select conditons
     Vector joinlist;          //List of join conditions
     Vector groupbylist;
+    boolean isdistinct;
     int numJoin;    // Number of joins in this query
 
 
@@ -35,6 +36,7 @@ public class RandomInitialPlan{
 	selectionlist= sqlquery.getSelectionList();
 	joinlist = sqlquery.getJoinList();
 	groupbylist = sqlquery.getGroupByList();
+	isdistinct = sqlquery.isDistinct();
 	numJoin = joinlist.size();
 
 
@@ -59,6 +61,9 @@ public class RandomInitialPlan{
 	    createJoinOp();
 	}
 	createProjectOp();
+	if (isdistinct) {
+		createDistinctOp();
+	}
 	return root;
     }
 
@@ -78,6 +83,7 @@ public class RandomInitialPlan{
 
 
 	    String tabname = (String) fromlist.elementAt(i);
+		System.out.println(tabname);
 	    Scan op1 = new Scan(tabname,OpType.SCAN);
             tempop = op1;
 
@@ -128,7 +134,7 @@ public class RandomInitialPlan{
 		//System.out.println("RandomInitial:-------------Select-------:"+tabname);
 
 		Operator tempop = (Operator)tab_op_hash.get(tabname);
-	        op1 = new Select(tempop,cn,OpType.SELECT);
+	        op1 = new Select(tempop, cn, OpType.SELECT);
 		/** set the schema same as base relation **/
 		op1.setSchema(tempop.getSchema());
 
@@ -205,6 +211,17 @@ public class RandomInitialPlan{
 	}
     }
 
+	public void createDistinctOp() {
+		Operator base = root;
+		//If not distinct, do nothing
+		if (isdistinct == false) {
+			return;
+		}
+		else {
+			root = new Distinct(base, OpType.DISTINCT);
+			root.setSchema(base.getSchema());
+		}
+	}
     private void modifyHashtable(Operator old, Operator newop){
 	Enumeration e=tab_op_hash.keys();
 	while(e.hasMoreElements()){

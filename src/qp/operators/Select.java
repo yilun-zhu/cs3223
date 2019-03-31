@@ -27,7 +27,6 @@ public class Select extends Operator{
 	super(type);
 	this.base=base;
 	this.con=con;
-
     }
 
     public void setBase(Operator base){
@@ -72,58 +71,56 @@ public class Select extends Operator{
      **/
 
     public Batch next(){
-	//System.out.println("Select:-----------------in next--------------");
+		System.out.println("Select:-----------------in next--------------");
 
-	int i=0;
+		int i=0;
 
-	if(eos){
-		close();
-	    return null;
-	}
-
-        /** An output buffer is initiated**/
-	outbatch = new Batch(batchsize);
-
-	/** keep on checking the incoming pages until
-	 ** the output buffer is full
-	 **/
-	while(!outbatch.isFull()){
-	    if(start==0){
-		inbatch= base.next();
-		/** There is no more incoming pages from base operator **/
-		if(inbatch==null){
-
-		    eos = true;
-		    return outbatch;
+		if(eos){
+			close();
+			return null;
 		}
-	    }
 
-	    /** Continue this for loop until this page is fully observed
-	     ** or the output buffer is full
-	     **/
+			/** An output buffer is initiated**/
+		outbatch = new Batch(batchsize);
 
-	    for(i=start;i<inbatch.size() && (!outbatch.isFull());i++){
-		Tuple present = inbatch.elementAt(i);
-		/** If the condition is satisfied then
-		 ** this tuple is added tot he output buffer
+		/** keep on checking the incoming pages until
+		 ** the output buffer is full
 		 **/
-		if(checkCondition(present))
-		//if(present.checkCondn(con))
-		    outbatch.add(present);
-	    }
+		while(!outbatch.isFull()){
+			if(start==0){
+				inbatch= base.next();
+				/** There is no more incoming pages from base operator **/
+				if(inbatch==null){
 
-	/** Modify the cursor to the position requierd
-	 ** when the base operator is called next time;
-	 **/
+					eos = true;
+					return outbatch;
+				}
+			}
+			System.out.println("Select:-----------------!!!!!!!in next--------------");
+			/** Continue this for loop until this page is fully observed
+			 ** or the output buffer is full
+			 **/
 
-	    if(i==inbatch.size())
-		start=0;
-	    else
-		start = i;
+			for(i=start;i<inbatch.size() && (!outbatch.isFull());i++){
+				Tuple present = inbatch.elementAt(i);
+				/** If the condition is satisfied then
+				 ** this tuple is added tot he output buffer
+				 **/
+				if(checkCondition(present))
+				//if(present.checkCondn(con))
+					outbatch.add(present);
+			}
 
-	    //  return outbatch;
-	}
-	return outbatch;
+		/** Modify the cursor to the position requierd
+		 ** when the base operator is called next time;
+		 **/
+
+			if(i==inbatch.size())
+				start=0;
+			else
+				start = i;
+		}
+		return outbatch;
     }
 
 
@@ -227,10 +224,10 @@ public class Select extends Operator{
 
 
 
-    public Object clone(){
+    public Select clone(){
 	Operator newbase = (Operator) base.clone();
 	Condition newcon = (Condition) con.clone();
-	Select newsel = new Select(newbase,newcon,optype);
+	Select newsel = new Select(newbase,newcon,optype);//, isdistinct);
 	newsel.setSchema(newbase.getSchema());
 	return newsel;
     }

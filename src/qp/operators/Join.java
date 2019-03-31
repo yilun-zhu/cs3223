@@ -82,7 +82,7 @@ public class Join extends Operator{
 	return con;
     }
 
-    public Object clone(){
+    public Join clone(){
 	Operator newleft = (Operator) left.clone();
 	Operator newright =(Operator) right.clone();
 	Condition newcond = (Condition) con.clone();
