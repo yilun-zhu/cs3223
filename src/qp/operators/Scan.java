@@ -75,6 +75,7 @@ public class Scan extends Operator {
 
 	while(!tuples.isFull()){
 	    try {
+	    	//System.out.println("Here");
 		Tuple data = (Tuple) in.readObject();
 		//System.out.print("SCAN:");
 		//Debug.PPrint(data);
@@ -112,7 +113,7 @@ public class Scan extends Operator {
     }
 
 
-    public Object clone(){
+    public Scan clone(){
 	String newtab = tabname;
 	Scan newscan = new Scan(newtab,optype);
 	newscan.setSchema((Schema) schema.clone());

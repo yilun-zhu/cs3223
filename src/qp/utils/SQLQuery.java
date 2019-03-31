@@ -54,15 +54,15 @@ public class SQLQuery {
 	/** split the condition list into selection, and join list **/
 
     protected void splitConditionList(Vector tempVector){
-	selectionList = new Vector();
-	joinList = new Vector();
-	for(int i=0;i<tempVector.size();i++){
-	    Condition cn = (Condition) tempVector.elementAt(i);
-	    if(cn.getOpType() == Condition.SELECT)
-		selectionList.add(cn);
-	    else
-		joinList.add(cn);
-	}
+        selectionList = new Vector();
+        joinList = new Vector();
+        for(int i=0;i<tempVector.size();i++){
+            Condition cn = (Condition) tempVector.elementAt(i);
+            if(cn.getOpType() == Condition.SELECT)
+                selectionList.add(cn);
+            else
+                joinList.add(cn);
+        }
     }
 
 

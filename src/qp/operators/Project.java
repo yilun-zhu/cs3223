@@ -10,6 +10,7 @@ public class Project extends Operator{
     Operator base;
     Vector attrSet;
 	int batchsize;  // number of tuples per outbatch
+	int type;
 
 
     /** The following fields are requied during execution
@@ -25,12 +26,11 @@ public class Project extends Operator{
 
     int[] attrIndex;
 
-
     public Project(Operator base, Vector as,int type){
 	super(type);
 	this.base=base;
 	this.attrSet=as;
-
+	this.type = type;
     }
 
     public void setBase(Operator base){
@@ -91,27 +91,28 @@ public class Project extends Operator{
 	**/
 
 	inbatch = base.next();
-	// System.out.println("Project:-------------- inside the next---------------");
+	//System.out.println("Project:-------------- inside the next---------------");
 
 
 	if(inbatch == null){
 	    return null;
 	}
 	//System.out.println("Project:---------------base tuples---------");
-	for(int i=0;i<inbatch.size();i++){
-	    Tuple basetuple = inbatch.elementAt(i);
-	    //Debug.PPrint(basetuple);
-	    //System.out.println();
-	    Vector present = new Vector();
-	    for(int j=0;j<attrSet.size();j++){
-		Object data = basetuple.dataAt(attrIndex[j]);
-		present.add(data);
-	    }
-	    Tuple outtuple = new Tuple(present);
-	    outbatch.add(outtuple);
+	for (int i = 0; i < inbatch.size(); i++) {
+		Tuple basetuple = inbatch.elementAt(i);
+		//Debug.PPrint(basetuple);
+		//System.out.println();
+		Vector present = new Vector();
+		for (int j = 0; j < attrSet.size(); j++) {
+			Object data = basetuple.dataAt(attrIndex[j]);
+			present.add(data);
+		}
+
+		Tuple outtuple = new Tuple(present);
+		outbatch.add(outtuple);
 	}
 	return outbatch;
-    }
+}
 
 
     /** Close the operator */
@@ -126,7 +127,7 @@ public class Project extends Operator{
     }
 
 
-    public Object clone(){
+    public Project clone(){
 	Operator newbase = (Operator) base.clone();
 	Vector newattr = new Vector();
 	for(int i=0;i<attrSet.size();i++)
