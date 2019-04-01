@@ -13,38 +13,10 @@ public class Distinct extends Operator{
     int batchsize;  // number of tuples per outbatch
     int count = -1;
 
-    /** The following fields are requied during execution
-     ** of the Project Operator
-     **/
-/*
-    Batch inbatch;
-    Batch outbatch; //output buffer
-*/
-    /** index of the attributes in the base operator
-     ** that are to be projected
-     **/
-
-
-/*
-    int buffers;
-    Comparable<Attribute> comparator;
-    int tupleSize;
-    int batchSize;
-    int numRuns;
-    List<File> files;
-    ObjectInputStream inputStream;
-    String filename;
-*/
-
     public Distinct(Operator base, int type){
         super(type);
         this.base = base;
-        /*
-        super(type);
-        this.base=op;
-        this.buffers = buffers;
-        String filename = tabname + ".tbl";
-        */
+
     }
 
     public void setBase(Operator base){
@@ -81,12 +53,21 @@ public class Distinct extends Operator{
         Batch outbatch = new Batch(batchsize);
         for (int a = 0; a < inbatch.size(); a++) {
             outbatch.add(inbatch.elementAt(a));
+            for (int b = 0; b < outbatch.size() - 1; b++) {
+                Tuple outBatchTup = outbatch.elementAt(b);
+                System.out.println(b);
+                if (outBatchTup.data().equals((inbatch.elementAt(a).data()))) {
+                    outbatch.remove(outbatch.size() - 1);
+                    System.out.println("addTup");
+                    break;
+                }
+            }
         }
         base.open();
         Batch comparisonBatch = base.next();
         int comparisonCount = 0;
         while (comparisonBatch != null) {
-            if (comparisonCount != count) {
+            if (comparisonCount > count) {
                 int k = 0;
                 boolean found = false;
                 while (k < outbatch.size()) {
@@ -102,7 +83,7 @@ public class Distinct extends Operator{
                         System.out.println(tuptoCheck.data());
                         if (outBatchTup.data().equals(tuptoCheck.data())) {
                             System.out.println("removed outBatchTup");
-                            outbatch.remove(k);
+                            outbatch.remove(outbatch.indexOf(outBatchTup));
                             found = true;
                             break;
                         }
