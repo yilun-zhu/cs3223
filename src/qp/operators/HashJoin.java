@@ -308,7 +308,7 @@ public class HashJoin extends Join{
 							}
 						}
 					}
-					//load right partition for probing
+					//prepare one right partition for probing
 					try {
 						rightpart = (Batch) in_right.readObject();
 					} catch (EOFException e) {

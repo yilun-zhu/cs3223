@@ -97,17 +97,17 @@ public class BlockNestedJoin extends Join {
         outputBuffer = new Batch(batchSize);
 
         while (!outputBuffer.isFull()) {
-            System.out.println("New iteration");
+            //System.out.println("New iteration");
             // Load left buffers if right table stream has reached the end meaning we need new left block
             if (endOfRightTableStream && leftCursor == 0) {
                 leftBlockBuffers.clear();
                 while (leftBlockBuffers.size() <= numBuff - 2) {
                     Batch buffer = left.next();
                     if (buffer != null) {
-                        System.out.println("Left Buffer is not null");
+                        //System.out.println("Left Buffer is not null");
                         leftBlockBuffers.add(buffer);
                     } else {
-                        System.out.println("Left Buffer is null");
+                        //System.out.println("Left Buffer is null");
                         break;
                     }
                 }
@@ -135,30 +135,30 @@ public class BlockNestedJoin extends Join {
                     return outputBuffer;
                 }
             }
-            System.out.println(leftBufferCursor);
-            System.out.println("LeftBufferCursor: " + leftBufferCursor);
+            //System.out.println(leftBufferCursor);
+            //System.out.println("LeftBufferCursor: " + leftBufferCursor);
             while (!endOfRightTableStream) {
-                System.out.println("Checkpoint 1 leftBufferCursor: " + leftBufferCursor);
+                //System.out.println("Checkpoint 1 leftBufferCursor: " + leftBufferCursor);
                 try {
                     if (rightCursor == 0 && leftCursor == 0 && leftBufferCursor == 0) {
                         rightBuffer = (Batch) rightTableFilePointer.readObject();
                     }
                     for (int k = leftBufferCursor; k < leftBlockBuffers.size(); k++) {
                         Batch leftBuffer = leftBlockBuffers.get(k);
-                        System.out.println("leftBufferCursor: " + leftBufferCursor + " leftCursor: " + leftCursor + " rightCursor: " + rightCursor);
+                        //System.out.println("leftBufferCursor: " + leftBufferCursor + " leftCursor: " + leftCursor + " rightCursor: " + rightCursor);
                         for (int i = leftCursor; i < leftBuffer.size(); i++) {
-                            System.out.println("Checkpoint 3");
+                            //System.out.println("Checkpoint 3");
                             Tuple lefttuple = leftBuffer.elementAt(i);
                             for (int j = rightCursor; j < rightBuffer.size(); j++) {
-                                System.out.println("Checkpoint 4");
+                                //System.out.println("Checkpoint 4");
                                 Tuple righttuple = rightBuffer.elementAt(j);
-                                System.out.println("Comparing Left(" + leftBufferCursor + ", " + i + ", right: " + j);
+                                //System.out.println("Comparing Left(" + leftBufferCursor + ", " + i + ", right: " + j);
                                 if (lefttuple.checkJoin(righttuple, leftAttributeIndex, rightAttributeIndex)) {
                                     Tuple outtuple = lefttuple.joinWith(righttuple);
-                                    System.out.println("Checkpoint 5");
+                                    //System.out.println("Checkpoint 5");
                                     outputBuffer.add(outtuple);
                                     if (outputBuffer.isFull()) {
-                                        System.out.println("Output buffer is full");
+                                        //System.out.println("Output buffer is full");
                                         if (k < leftBlockBuffers.size() - 1) { // left block still has buffer
                                             rightCursor = 0;
                                             leftCursor = 0;
@@ -177,11 +177,11 @@ public class BlockNestedJoin extends Join {
                                 }
                             }
                             rightCursor = 0;
-                            System.out.println("Checkpoint 6");
+                            //System.out.println("Checkpoint 6");
                         }
                         leftCursor = 0;
                     }
-                    System.out.println("Checkpoint 7");
+                    //System.out.println("Checkpoint 7");
                     leftBufferCursor = 0;
                 } catch (EOFException e) {
                     try {
