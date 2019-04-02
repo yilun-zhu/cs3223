@@ -149,21 +149,21 @@ public class PlanCost{
 	//System.out.println("PlanCost: jointype="+joinType);
 
 	switch(joinType){
-	case JoinType.NESTEDJOIN:
-	    joincost = leftpages*rightpages;
-	    break;
-	case JoinType.BLOCKNESTED:
-	    joincost = 2 * leftpages*rightpages;
-	    break;
-	case JoinType.SORTMERGE:
-	    joincost = 2 * leftpages*rightpages;
-	    break;
-	case JoinType.HASHJOIN:
-	    joincost = 3*leftpages + 3*rightpages;
-	    break;
-	default:
-	    joincost=0;
-	    break;
+		case JoinType.NESTEDJOIN:
+			joincost = leftpages + lefttuples*rightpages;
+			break;
+		case JoinType.BLOCKNESTED:
+			joincost = leftpages + (leftpages/(numbuff-2))*rightpages;
+			break;
+		/*case JoinType.SORTMERGE:
+			joincost = 2 * leftpages*rightpages;
+			break;*/
+		case JoinType.HASHJOIN:
+			joincost = 3*leftpages + 3*rightpages;
+			break;
+		default:
+			joincost=0;
+			break;
 	}
 
 	 cost = cost+joincost;

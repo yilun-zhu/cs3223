@@ -21,8 +21,8 @@ public class HashJoin extends Join{
 	int leftindex;     // Index of the join attribute in left table
 	int rightindex;    // Index of the join attribute in right table
 
-	String rfname;    // The file name where the right hj partition is materialize
-	String lfname;    // The file name where the left hj partition is materialize
+	String rfname;    // right partition file name
+	String lfname;    // left partition file name
 
 	Batch[] join_hash; //in memory hash table
 
@@ -48,7 +48,9 @@ public class HashJoin extends Join{
 
 	}
 
-
+	/*
+	 * Partition both the left and right table into their buckets separately
+	 */
 
 	public boolean open(){
 
@@ -60,7 +62,7 @@ public class HashJoin extends Join{
 		int lefttuplesize = left.schema.getTupleSize();
 		leftbatchsize = Batch.getPageSize()/lefttuplesize;
 
-		Batch[] partbuckets = new Batch[numBuff - 1]; //num of partitions <= B-1
+		Batch[] partbuckets = new Batch[numBuff - 1]; //num of partitions = B-1
 
 		Attribute leftattr = con.getLhs();
 		Attribute rightattr =(Attribute) con.getRhs();
@@ -79,13 +81,15 @@ public class HashJoin extends Join{
 			return false;
 		}
 		else {
-			//initialise buckets for partition
+			//initialise buckets for partitioning
 			for (int i = 0; i < partbuckets.length; i++) {
 				partbuckets[i] = new Batch(leftbatchsize);
 			}
 			try{
 				ObjectOutputStream[] leftoutput = new ObjectOutputStream[numBuff - 1];
 				for(int i = 0; i<numBuff-1;i++){
+					//identify partitions by the bucket number i
+					//hashcode is taken to differentiate files when there are multiple joins
 					String fname =  "HJLeft" + i + this.hashCode();
 					leftoutput[i] = new ObjectOutputStream(new FileOutputStream(fname));
 				}
@@ -93,9 +97,10 @@ public class HashJoin extends Join{
 					for (int i = 0; i < leftpart.size(); i++) {
 						Tuple temp = leftpart.elementAt(i);
 						int key = temp.dataAt(leftindex).hashCode();
+						//hash function key % numbuckets
 						int bucketnum = key % (partbuckets.length);
 
-						//if bucket is full, write out to disk
+						//if bucket is full, write out to disk, initialise new bucket to continue
 						if (partbuckets[bucketnum].isFull()) {
 							leftoutput[bucketnum].writeObject(partbuckets[bucketnum]);
 							partbuckets[bucketnum] = new Batch(leftbatchsize);
@@ -106,7 +111,7 @@ public class HashJoin extends Join{
 
 				for(int i = 0; i < numBuff - 1;i++){
 					if(!partbuckets[i].isEmpty()){
-						leftoutput[i].writeObject(partbuckets[i]); //write the rest into file
+						leftoutput[i].writeObject(partbuckets[i]); //at the end, write the rest into file
 					}
 				}
 				//close output stream
@@ -122,7 +127,7 @@ public class HashJoin extends Join{
 				return false;
 			}
 		}
-		//right partition
+		//right partition, same as left
 		if (!right.open()) {
 			return false;
 		}
@@ -174,6 +179,7 @@ public class HashJoin extends Join{
 
 	}
 
+	//carry out probing phase
 	public Batch next() {
 		if (hjfin){
 			System.out.println("HashJoin:-----------------FINISHED----------------");
@@ -181,6 +187,7 @@ public class HashJoin extends Join{
 			return null;
 		}
 		outbatch = new Batch(batchsize);
+		//carry out until out buffer is full
 		while (!outbatch.isFull()) {
 			if (lcurs == 0 && rcurs == 0 && eosr) { //start or end of last batch
 
@@ -195,12 +202,14 @@ public class HashJoin extends Join{
 					}
 
 				} else {
-					//if left table reaches the end, increase index of both left and right tables
+					//if it is the end of last batch, continue with next partition
+					//else, continue reading current partition
 					if (eosl) {
 						partition_no++;
 						lfname = "HJLeft" + partition_no + this.hashCode();
 						rfname = "HJRight" + partition_no + this.hashCode();
 					}
+
 					try {
 						in_left = new ObjectInputStream(new FileInputStream(lfname));
 						in_right = new ObjectInputStream(new FileInputStream(rfname));
@@ -209,7 +218,7 @@ public class HashJoin extends Join{
 						e.printStackTrace();
 						continue;
 					}
-					join_hash = new Batch[numBuff - 2]; //new hashtable
+					join_hash = new Batch[numBuff - 2]; //initiate new hashtable for probing
 
 					//initialise new buffer pages for hash table
 					for (int i = 0; i < numBuff - 2; i++) {
@@ -219,6 +228,7 @@ public class HashJoin extends Join{
 					eosr = false;
 					rightpart = null;
 					boolean full = false;
+					//read until left partition reaches the end
 					while (!eosl && !full) {
 						try {
 							leftpart = (Batch) in_left.readObject();
@@ -238,12 +248,14 @@ public class HashJoin extends Join{
 							e.printStackTrace();
 							System.exit(1);
 						}
-						for (int left_pt = 0; left_pt < leftpart.size(); left_pt++) { //build hash table
+						for (int left_pt = 0; left_pt < leftpart.size(); left_pt++) { //build hash table with left partition
 							Tuple temp = leftpart.elementAt(left_pt);
 							int key = temp.dataAt(leftindex).hashCode();
+							//hash function, different from partition phase
 							int bucketnum = key % (numBuff - 2);
 							join_hash[bucketnum].add(temp);
-							if (join_hash[bucketnum].size() >= leftbatchsize) { //if buffer is not big enough
+							if (join_hash[bucketnum].size() >= leftbatchsize) {
+								//if buffer is not big enough, write the rest into file and continue reading next round.
 								eosl = false;
 								String tempFile = "tempFile" + this.hashCode();
 								full = true;
@@ -296,7 +308,7 @@ public class HashJoin extends Join{
 							}
 						}
 					}
-					//load right partition
+					//load right partition for probing
 					try {
 						rightpart = (Batch) in_right.readObject();
 					} catch (EOFException e) {
@@ -316,19 +328,22 @@ public class HashJoin extends Join{
 					}
 				}
 			}
+			//reading right partition until it finishes
 			while (!eosr) {
 				//load hashtable for probing
 				for (int right_pt = rcurs; right_pt < rightpart.size(); right_pt++) {
 					Tuple rightTemp = rightpart.elementAt(right_pt);
-					int bucketnum = rightTemp.dataAt(rightindex).hashCode() % (numBuff - 2);
-					//probe against hash table
+					int key = rightTemp.dataAt(rightindex).hashCode();
+					int bucketnum = key % (numBuff - 2);
+					//probe against left partition in hash table
 					for (int tbl_pt = lcurs; tbl_pt < join_hash[bucketnum].size(); tbl_pt++) {
 						Tuple leftTemp = join_hash[bucketnum].elementAt(tbl_pt);
 						if (leftTemp.checkJoin(rightTemp, leftindex, rightindex)) {
 							Tuple outtuple = leftTemp.joinWith(rightTemp);
+							//if it matches, write to outbatch
 							outbatch.add(outtuple);
 							if (outbatch.isFull()) {
-								//save pointers
+								//if outbatch is full, write out and save pointers for next round
 								if (tbl_pt == join_hash[bucketnum].size() - 1 && right_pt != rightpart.size() - 1) {
 									lcurs = 0;
 									rcurs = right_pt + 1;

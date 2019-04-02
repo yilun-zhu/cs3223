@@ -36,3 +36,23 @@ out/production/CS3223/qp/utils/Block\.class
 out/production/CS3223/QueryMain\.class
 
 src/qp/optimizer/RandomOptimizer\.java
+
+out/production/CS3223/qp/operators/Debug\.class
+
+out/production/CS3223/qp/operators/Distinct\.class
+
+out/production/CS3223/qp/operators/HashJoin\.class
+
+out/production/CS3223/qp/operators/JoinType\.class
+
+out/production/CS3223/qp/parser/CUP\$parser\$actions\.class
+
+out/production/CS3223/qp/parser/parser\.class
+
+out/production/CS3223/qp/parser/parser\.cup
+
+out/production/CS3223/sym\.class
+
+query1res\.txt
+
+out/production/CS3223/*
