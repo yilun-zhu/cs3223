@@ -83,6 +83,9 @@ public class RandomOptimizer{
 		int NUMITER ;
 		if(numJoin!=0){
 			NUMITER = 2 *numJoin;
+			if (NUMITER < 10){
+				NUMITER = 10;
+			}
 		}else{
 			NUMITER=1;
 		}
@@ -174,26 +177,31 @@ public class RandomOptimizer{
 	public Operator getTwoPhaseOptimizedPlan() {
 		Operator currentStage = getOptimizedPlan();
 		Operator globalMinimumStage = currentStage;
-		PlanCost planCost = new PlanCost();
-		int minCost = planCost.getCost(globalMinimumStage);
+		PlanCost initCost = new PlanCost();
+		int minCost = initCost.getCost(globalMinimumStage);
 		double temperature = 0.1*minCost;
 		int timeToFreeze = 4;
 		System.out.println("Iterative Improvement Plan Cost: " + minCost);
 		while (temperature > 1 && timeToFreeze > 0) {
 			int equilibrium = 16*numJoin;
 			while (equilibrium > 0) {
-				Operator stageNeighbour = getNeighbor(currentStage);
-				int deltaCost = planCost.getCost(stageNeighbour) - planCost.getCost(currentStage);
+				Operator currentStageClone = currentStage.clone();
+				Operator stageNeighbour = getNeighbor(currentStageClone);
+				PlanCost pc = new PlanCost();
+				PlanCost pc2 = new PlanCost();
+				int deltaCost = pc.getCost(stageNeighbour) - pc2.getCost(currentStage);
 				if (deltaCost <= 0) {
 					currentStage = stageNeighbour;
 				} else {
 					SecureRandom secureRandom = new SecureRandom();
-					double probability = Math.exp(-deltaCost/temperature);
+					double probability = Math.exp(-(deltaCost/temperature));
 					if (secureRandom.nextDouble() < probability) {
+						System.out.println("Jump to neighbour");
 						currentStage = stageNeighbour;
 					}
 				}
-				int competingStageCost = planCost.getCost(currentStage);
+				pc = new PlanCost();
+				int competingStageCost = pc.getCost(currentStage);
 				if (minCost > competingStageCost) {
 					minCost = competingStageCost;
 					globalMinimumStage = currentStage;
@@ -448,8 +456,8 @@ public class RandomOptimizer{
 		if(node.getOpType()==OpType.JOIN){
 			Operator left = makeExecPlan(((Join)node).getLeft());
 			Operator right = makeExecPlan(((Join)node).getRight());
-			int joinType = ((Join)node).getJoinType();
-			//int joinType = JoinType.BLOCKNESTED;
+			//int joinType = ((Join)node).getJoinType();
+			int joinType = JoinType.BLOCKNESTED;
 			//int joinType = JoinType.HASHJOIN;
 			//int joinType = JoinType.NESTEDJOIN;
 			int numbuff = BufferManager.getBuffersPerJoin();
