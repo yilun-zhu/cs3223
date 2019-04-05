@@ -112,7 +112,6 @@ public class Distinct extends Operator{
 
     public Distinct clone(){
         Operator newbase = base.clone();
-        System.out.println(newbase.getClass());
         Distinct newdist = new Distinct( base.clone(), optype);
         newdist.setSchema(newbase.getSchema());
         return newdist;

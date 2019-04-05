@@ -109,6 +109,11 @@ public class Debug{
 	    PPrint(((Project)node).getBase());
 	    System.out.print(")");
 
+	}else if(optype==OpType.DISTINCT){
+		System.out.print("Distinct(");
+		PPrint(((Distinct)node).getBase());
+		System.out.print(")");
+
 	}else if(optype==OpType.SCAN){
 	    System.out.print(((Scan)node).getTabName());
 	}

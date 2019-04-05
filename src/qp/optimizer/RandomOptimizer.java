@@ -84,7 +84,7 @@ public class RandomOptimizer{
 		if(numJoin!=0){
 			NUMITER = 2 *numJoin;
 			if (NUMITER < 10){
-				NUMITER = 10;
+				NUMITER = 10; //tweak for 2 phase optimisation
 			}
 		}else{
 			NUMITER=1;
