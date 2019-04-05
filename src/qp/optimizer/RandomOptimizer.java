@@ -451,6 +451,7 @@ public class RandomOptimizer{
 			int joinType = ((Join)node).getJoinType();
 			//int joinType = JoinType.BLOCKNESTED;
 			//int joinType = JoinType.HASHJOIN;
+			//int joinType = JoinType.NESTEDJOIN;
 			int numbuff = BufferManager.getBuffersPerJoin();
 			switch(joinType){
 			case JoinType.NESTEDJOIN:

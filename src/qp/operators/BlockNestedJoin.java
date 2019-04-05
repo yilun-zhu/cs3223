@@ -65,7 +65,7 @@ public class BlockNestedJoin extends Join {
             return false;
         } else {
             filenum++;
-            rightTableFileName = "NJtemp-" + String.valueOf(filenum);
+            rightTableFileName = "BNJtemp-" + String.valueOf(filenum);
             try {
                 ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(rightTableFileName));
                 while ((rightPage = right.next()) != null) {
@@ -159,18 +159,18 @@ public class BlockNestedJoin extends Join {
                                     outputBuffer.add(outtuple);
                                     if (outputBuffer.isFull()) {
                                         //System.out.println("Output buffer is full");
-                                        if (k < leftBlockBuffers.size() - 1) { // left block still has buffer
-                                            rightCursor = 0;
-                                            leftCursor = 0;
-                                            leftBufferCursor = k + 1;
+                                        if (j < rightBuffer.size() - 1) { // Right table not done
+                                            rightCursor += j + 1;
+                                            leftCursor = i;
+                                            leftBufferCursor = k;
                                         } else if (i < leftBuffer.size() - 1) { // current left buffer has not done
                                             rightCursor = 0;
                                             leftCursor = i + 1;
                                             leftBufferCursor = k;
-                                        } else if (j < rightBuffer.size() - 1) { // Right table not done
-                                            rightCursor += j + 1;
-                                            leftCursor = i;
-                                            leftBufferCursor = k;
+                                        } else if (k < leftBlockBuffers.size() - 1) { // left block still has buffer
+                                            rightCursor = 0;
+                                            leftCursor = 0;
+                                            leftBufferCursor = k + 1;
                                         }
                                         return outputBuffer;
                                     }
